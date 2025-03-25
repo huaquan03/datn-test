@@ -1,0 +1,51 @@
+version: '3.8'
+services:
+  spark-master:
+    image: bitnami/spark:latest
+    environment:
+      - SPARK_MODE=master
+    ports:
+      - "7077:7077"
+      - "8080:8080"
+    networks:
+      - shared_net
+
+  spark-worker1:
+    image: bitnami/spark:latest
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark-master:7077
+    depends_on:
+      - spark-master
+    ports:
+      - "8081:8081"   # UI cho Spark Worker
+    networks:
+      - shared_net
+
+  spark-worker2:
+    image: bitnami/spark:latest
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark-master:7077
+    depends_on:
+      - spark-master
+    ports:
+      - "8082:8082"   # UI cho Spark Worker
+    networks:
+      - shared_net
+
+  spark-worker3:
+    image: bitnami/spark:latest
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark-master:7077
+    depends_on:
+      - spark-master
+    ports:
+      - "8083:8083"   # UI cho Spark Worker
+    networks:
+      - shared_net
+
+networks:
+  shared_net:
+    external: true
