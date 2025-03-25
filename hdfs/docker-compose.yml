@@ -1,0 +1,72 @@
+version: "3.3"
+
+services:
+  namenode:
+    image: bde2020/hadoop-namenode:2.0.0-hadoop2.7.4-java8
+    container_name: namenode
+    hostname: namenode
+    networks:
+      - shared_net
+    ports:
+      - "9870:9870"   # Web UI của Namenode
+      - "9000:9000"   # Giao tiếp HDFS
+    volumes:
+      - namenode_data:/hadoop/dfs/name
+      - ./config/hdfs-site.xml:/hadoop/etc/hadoop/hdfs-site.xml  # File cấu hình tùy chỉnh
+    environment:
+      - CLUSTER_NAME=test
+
+  datanode1:
+    image: bde2020/hadoop-datanode:2.0.0-hadoop2.7.4-java8
+    container_name: datanode1
+    hostname: datanode1
+    networks:
+      - shared_net
+    ports:
+      - "9864:9864"
+    volumes:
+      - datanode1_data:/hadoop/dfs/data
+    environment:
+      - NAMENODE_URI=hdfs://namenode:9000
+    depends_on:
+      - namenode
+
+  datanode2:
+    image: bde2020/hadoop-datanode:2.0.0-hadoop2.7.4-java8
+    container_name: datanode2
+    hostname: datanode2
+    networks:
+      - shared_net
+    ports:
+      - "9865:9864"
+    volumes:
+      - datanode2_data:/hadoop/dfs/data
+    environment:
+      - NAMENODE_URI=hdfs://namenode:9000
+    depends_on:
+      - namenode
+
+  datanode3:
+    image: bde2020/hadoop-datanode:2.0.0-hadoop2.7.4-java8
+    container_name: datanode3
+    hostname: datanode3
+    networks:
+      - shared_net
+    ports:
+      - "9866:9864"
+    volumes:
+      - datanode3_data:/hadoop/dfs/data
+    environment:
+      - NAMENODE_URI=hdfs://namenode:9000
+    depends_on:
+      - namenode
+
+networks:
+  shared_net:
+    external: true
+
+volumes:
+  namenode_data:
+  datanode1_data:
+  datanode2_data:
+  datanode3_data:
