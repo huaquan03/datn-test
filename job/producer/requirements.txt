@@ -1,5 +1,0 @@
-python-dotenv
-
-kafka-python==2.0.5
-
-
