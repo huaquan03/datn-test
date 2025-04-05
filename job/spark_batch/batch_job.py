@@ -1,27 +1,31 @@
-from pyspark.sql import SparkSession
+from pyspark.sql import SparkSession 
+from pyspark.sql import functions as F
 
 # Khởi tạo SparkSession
-spark = SparkSession.builder.appName("TweetBatchProcessing").getOrCreate()
+spark = SparkSession.builder.appName("BatchProcessing").getOrCreate()
 spark.conf.set("spark.sql.debug.maxToStringFields", 100)
 
-# Đọc file CSV với các tùy chọn giúp tránh lỗi header
-df = spark.read.option("header", "true") \
-               .option("inferSchema", "true") \
-               .option("multiLine", "true") \
-               .option("escape", "\"") \
-               .option("mode", "DROPMALFORMED") \
-               .option("ignoreLeadingWhiteSpace", "true") \
-               .option("ignoreTrailingWhiteSpace", "true") \
-               .csv("/archive/1.csv")
+# Đọc file Parquet với các tùy chọn giúp tránh lỗi header
+df = spark.read.parquet("hdfs://namenode:9000/gmd.parquet")
 
 # Hiển thị schema để kiểm tra
 df.printSchema()
+sum=0
 
+total_volume_df = df.agg(F.sum("volume").alias("total_volume"))
+total_volume_df.show()
+
+
+print  ("Tổng số lượng cổ phiếu: ", sum)
 # Loại bỏ dòng có text NULL
-processed_df = df.filter(df.text.isNotNull())
+
 
 # Hiển thị kết quả
-processed_df.show(truncate=False)
+
+df.show(truncate=False)
+# Chọn các cột cần thiết
+
+# Đổi tên cột
 
 # Nếu cần, lưu lại thành file Parquet để xử lý nhanh hơn lần sau
 # processed_df.write.mode("overwrite").parquet("/data/processed_tweets/")

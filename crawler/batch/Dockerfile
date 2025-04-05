@@ -1,6 +1,13 @@
 # Sử dụng image Python nhẹ
 FROM python:3.11.4-slim
 
+RUN apt-get update && \
+    apt-get install -y openjdk-17-jre-headless procps && \
+    rm -rf /var/lib/apt/lists/*
+
+# Thiết lập biến môi trường JAVA_HOME cho OpenJDK 17
+ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+
 # Đặt thư mục làm việc
 WORKDIR /app
 

@@ -16,6 +16,7 @@ services:
       - KAFKA_BOOTSTRAP_SERVERS=kafka:9093
       - SPARK_MASTER_URL=spark://spark-master:7077
     volumes:
+      - ./spark_batch:/opt/spark_batch
     command: ["python", "batch_job.py"]
     networks:
       - shared_net
